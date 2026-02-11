@@ -1,13 +1,77 @@
 
-
-
-
 #define INTEGRATION_C
 
 #include "integration.h"
 
+(*qf).name = right
+(*qf).formula = 
+
+double left(double (*f)(double), double b, double a)
+{
+  return (b-a)*f(a);
+}
+
+double right(double (*f)(double), double b, double a)
+{
+  return (b-a)*f(b);
+}
+
+double middle(double (*f)(double), double b, double a)
+{
+  return (b-a)*f((a+b)/2);
+}
+
+double trapezes(double (*f)(double), double b, double a)
+{
+  return (b-a)*(0.5*f(a)+0.5*f(b));
+}
+
+double simpson(double (*f)(double), double b, double a)
+{
+  return (b-a)*((1/6)*f(a)+(2/3)*f((a+b)/2)+(1/6)*f(b));
+}
+/*
+double gauss2(double (*f)(double), double b, double a)
+{
+  return;
+}
+*/
+
 bool setQuadFormula(QuadFormula* qf, char* name)
 {
+  (*qf).name = name;
+  if (name == "left")
+  {
+    (*qf).formula = double (*left)(double, double, double);
+  }
+  else if (name == "right")
+  {
+    (*qf).formula = double (*right)(double, double, double);
+  }
+  else if (name == "middle")
+  {
+    (*qf).formula = double (*middle)(double, double, double);
+  }
+  else if (name == "trapezes")
+  {
+    (*qf).formula = double (trapezes)(double, double, double);
+  }
+  else if (name == "simpson")
+  {
+
+  }
+  else if (name == "gauss2")
+  {
+    
+  }
+  else if (name == "gauss3")
+  {
+    
+  }
+  else
+  {
+    return false;
+  }
   return true;
 }
 
@@ -27,6 +91,7 @@ void printQuadFormula(QuadFormula* qf)
 */
 double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf)
 {
+
   return 0.0;
 }
 
