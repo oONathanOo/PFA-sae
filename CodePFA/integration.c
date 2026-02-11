@@ -91,13 +91,28 @@ void printQuadFormula(QuadFormula* qf)
 */
 double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf)
 {
-
-  return 0.0;
+  double start = a;
+  double length = (a+b)/N;
+  double end = a + length
+  double res = 0
+  while (end <= b)
+  {
+    //res = res + callfunc with ai = start and bi = end//
+    start = end
+    end += length;
+  }
+  return res;
 }
 
 double integrate_dx(double (*f)(double), double a, double b, double dx, QuadFormula* qf)
 {
-  return 0.0;
+  int N = (b-a)/dx
+  double temp = res;
+  if (((b-a)/dx) > temp+0.5)
+  {
+    res += 1;
+  }
+  return integrate(f,a,b,N,qf);
 }
 
 
