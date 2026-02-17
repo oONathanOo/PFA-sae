@@ -1,34 +1,32 @@
 
 #define INTEGRATION_C
-
+#include <string.h>
 #include "integration.h"
 
-(*qf).name = right
-(*qf).formula = 
 
-double left(double (*f)(double), double b, double a)
+double left(double (*f)(double), double a, double b)
 {
   return (b-a)*f(a);
 }
 
-double right(double (*f)(double), double b, double a)
+double right(double (*f)(double), double a, double b)
 {
   return (b-a)*f(b);
 }
 
-double middle(double (*f)(double), double b, double a)
+double middle(double (*f)(double), double a, double b)
 {
-  return (b-a)*f((a+b)/2);
+  return (b-a)*f((a+b)/2.0);
 }
 
-double trapezes(double (*f)(double), double b, double a)
+double trapezes(double (*f)(double), double a, double b)
 {
   return (b-a)*(0.5*f(a)+0.5*f(b));
 }
 
-double simpson(double (*f)(double), double b, double a)
+double simpson(double (*f)(double), double a, double b)
 {
-  return (b-a)*((1/6)*f(a)+(2/3)*f((a+b)/2)+(1/6)*f(b));
+  return (b-a)*((1.0/6.0)*f(a)+(2.0/3.0)*f((a+b)/2.0)+(1.0/6.0)*f(b));
 }
 /*
 double gauss2(double (*f)(double), double b, double a)
@@ -39,34 +37,35 @@ double gauss2(double (*f)(double), double b, double a)
 
 bool setQuadFormula(QuadFormula* qf, char* name)
 {
-  (*qf).name = name;
-  if (name == "left")
+  strncpy((*qf).name, name, sizeof((*qf).name)-1);
+  (*qf).name[19] = '\0';
+  if (strcmp(name, "left") == 0)
   {
-    (*qf).formula = double (*left)(double, double, double);
+    (*qf).formula = left;
   }
-  else if (name == "right")
+  else if (strcmp(name, "right") == 0)
   {
-    (*qf).formula = double (*right)(double, double, double);
+    (*qf).formula = right;
   }
-  else if (name == "middle")
+  else if (strcmp(name, "middle") == 0)
   {
-    (*qf).formula = double (*middle)(double, double, double);
+    (*qf).formula = middle;
   }
-  else if (name == "trapezes")
+  else if (strcmp(name, "trapezes") == 0)
   {
-    (*qf).formula = double (trapezes)(double, double, double);
+    (*qf).formula = trapezes;
   }
-  else if (name == "simpson")
+  else if (strcmp(name, "simpson") == 0)
   {
-
+    (*qf).formula = simpson;
   }
-  else if (name == "gauss2")
+  else if (strcmp(name, "gauss2") == 0)
   {
-    
+    (*qf).formula = gauss2;
   }
-  else if (name == "gauss3")
+  else if (strcmp(name, "gauss3") == 0)
   {
-    
+    (*qf).formula = gauss3;
   }
   else
   {
@@ -92,13 +91,13 @@ void printQuadFormula(QuadFormula* qf)
 double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf)
 {
   double start = a;
-  double length = (a+b)/N;
-  double end = a + length
-  double res = 0
-  while (end <= b)
+  double length = (b-a)/(double)N;
+  double end = a + length;
+  double res = 0.0;
+  for (int i = 0; i < N; i++)
   {
-    //res = res + callfunc with ai = start and bi = end//
-    start = end
+    res += (*qf).formula(f, start, end);
+    start = end;
     end += length;
   }
   return res;
@@ -106,11 +105,10 @@ double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf
 
 double integrate_dx(double (*f)(double), double a, double b, double dx, QuadFormula* qf)
 {
-  int N = (b-a)/dx
-  double temp = res;
-  if (((b-a)/dx) > temp+0.5)
+  int N = (fabs((b-a))/dx)+0.5;
+  if (N < 1)
   {
-    res += 1;
+    N = 1;
   }
   return integrate(f,a,b,N,qf);
 }
