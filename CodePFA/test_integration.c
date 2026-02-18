@@ -9,5 +9,11 @@
 
 int main()
 {
+  double (*f)(double) =;
+  double a =;
+  double b =;
+  int N =;
+  double dx =;
+  printf("The integral of th
   return 0;
 }
