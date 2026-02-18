@@ -30,11 +30,11 @@ double simpson(double (*f)(double), double a, double b)
 }
 double gauss2(double (*f)(double), double a, double b)
 {
-  return (1.0/2.0)*f((1.0 - 1.0/sqrt(3.0))/2.0) + (1.0/2.0)*f((1.0+(1.0)/sqrt(3.0))/2.0);
+  return (b-a)*(1.0/2.0*f(a+((1.0-(1.0/sqrt(3.0))/2.0)*(b-a)))+1.0/2.0*(f(a+((1.0+(1.0/sqrt(3.0))/2.0)*(b-a)))));
 }
 double gauss3(double (*f)(double), double a, double b)
 {
-  return (5.0/18.0)*f((1.0/2.0)*(1.0 - sqrt(3.0/5.0))) + (4.0/9.0)*f(1.0/2.0) +(5.0/18.0)*f((1.0/2.0)*(1.0 + sqrt(3.0/5.0)));
+  return (b-a)*((5.0/18.0)*(f(a+((1.0/2.0)*(1-sqrt(3.0/5.0)))(b-a)))+(4.0/9.0)*f(a+(1.0/2.0)(b-a))+(5.0/18.0)*(f(a+((1.0/2.0)*(1+sqrt(3.0/5.0)))(b-a))));
 }
 
 bool setQuadFormula(QuadFormula* qf, char* name)
