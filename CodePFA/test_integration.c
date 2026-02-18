@@ -20,7 +20,7 @@ int main()
   double b = 42.7;
   int N = 10;
   double dx = 3.8;
-  QuadFormula* qf = NULL;
+  QuadFormula* qf;
   printf("The integral of the function f(x) in between %f and %f using %i subdivisions is:\n", a , b, N);
   setQuadFormula(qf,"left");
   printf("Left : %f\n", integrate(f, a, b, N, qf));
