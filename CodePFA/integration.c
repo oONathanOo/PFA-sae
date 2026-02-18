@@ -28,12 +28,14 @@ double simpson(double (*f)(double), double a, double b)
 {
   return (b-a)*((1.0/6.0)*f(a)+(2.0/3.0)*f((a+b)/2.0)+(1.0/6.0)*f(b));
 }
-/*
-double gauss2(double (*f)(double), double b, double a)
+double gauss2(double (*f)(double), double a, double b)
 {
-  return;
+  return (1.0/2.0)*f((1.0 - 1.0/sqrt(3.0))/2.0) + (1.0/2.0)f((1.0+(1.0)/sqrt(3.0))/2.0);
 }
-*/
+double gauss3(double (*f)(double), double a, double b)
+{
+  return (5.0/18.0)*f((1.0/2.0)(1.0 - sqrt(3.0/5.0))) + (4.0/9.0)*f(1.0/2.0) +(5.0/18.0)*f((1.0/2.0)(1.0 + sqrt(3.0/5.0)));
+}
 
 bool setQuadFormula(QuadFormula* qf, char* name)
 {
