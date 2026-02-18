@@ -30,17 +30,20 @@ double simpson(double (*f)(double), double a, double b)
 }
 double gauss2(double (*f)(double), double a, double b)
 {
-  return (1.0/2.0)*f((1.0 - 1.0/sqrt(3.0))/2.0) + (1.0/2.0)f((1.0+(1.0)/sqrt(3.0))/2.0);
+  return (1.0/2.0)*f((1.0 - 1.0/sqrt(3.0))/2.0) + (1.0/2.0)*f((1.0+(1.0)/sqrt(3.0))/2.0);
 }
 double gauss3(double (*f)(double), double a, double b)
 {
-  return (5.0/18.0)*f((1.0/2.0)(1.0 - sqrt(3.0/5.0))) + (4.0/9.0)*f(1.0/2.0) +(5.0/18.0)*f((1.0/2.0)(1.0 + sqrt(3.0/5.0)));
+  return (5.0/18.0)*f((1.0/2.0)*(1.0 - sqrt(3.0/5.0))) + (4.0/9.0)*f(1.0/2.0) +(5.0/18.0)*f((1.0/2.0)*(1.0 + sqrt(3.0/5.0)));
 }
 
 bool setQuadFormula(QuadFormula* qf, char* name)
 {
+  printf("setting name\n");
   strncpy((*qf).name, name, sizeof((*qf).name)-1);
   (*qf).name[19] = '\0';
+  (*qf).formula = malloc(sizeof(double));
+  printf("setting name successful\n");
   if (strcmp(name, "left") == 0)
   {
     (*qf).formula = left;
@@ -71,8 +74,10 @@ bool setQuadFormula(QuadFormula* qf, char* name)
   }
   else
   {
+    printf("false\n");
     return false;
   }
+  printf("true\n");
   return true;
 }
 
@@ -96,12 +101,16 @@ double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf
   double length = (b-a)/(double)N;
   double end = a + length;
   double res = 0.0;
+  printf("starting loop integrate\n");
   for (int i = 0; i < N; i++)
   {
+    printf("integrate loop : %d\n", i);
     res += (*qf).formula(f, start, end);
+    printf("integrate loop : %d\n", i);
     start = end;
     end += length;
   }
+  printf("ending loop integrate\n");
   return res;
 }
 

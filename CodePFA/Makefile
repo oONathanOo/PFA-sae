@@ -1,12 +1,18 @@
 # Exemple de Makefile envoyé par Nouha (utilisé en Spé)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -lm
+CFLAGS = -Wall -Wextra -fsanitize=address -lm
+
 
 all: integration pfa
 
 integration: test_integration.o integration.o
 	$(CC) -o test_integration $^ $(CFLAGS)
+	./test_integration
+
+integrationmacos:
+	clang -g -O0 -Wall -Wextra test_integration.c integration.c -o test
+	leaks --atExit -- ./test
 
 test_integration.o: test_integration.c integration.h
 	$(CC) -o $@ -c test_integration.c
@@ -28,5 +34,5 @@ pfa.o: pfa.c pfa.h integration.h
 # .PHONY: clean
 
 clean:
-	$(RM) $(PROG) $(OBJ)
+	$(RM) test_integration.o test.o pfa.o test_pfa.o test_integration test_pfa integration.o
 
