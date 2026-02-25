@@ -5,6 +5,11 @@
 #define PFA_C
 
 #include "pfa.h"
+#include "integration.h"
+
+QuadFormula pfaQF;
+double pfa_dt;
+
 
 /* Initialize the integration variables.
    Arguments :
@@ -16,6 +21,12 @@
 */
 bool init_integration(char* quadrature, double dt)
 { 
+  if ((strcmp(name, "left") != 0) && (strcmp(name, "right") != 0) && (strcmp(name, "middle") != 0) && (strcmp(name, "trapezes") != 0) && (strcmp(name, "simpson") != 0) && (strcmp(name, "gauss2") != 0) && (strcmp(name, "gauss3") != 0) || dt < 0.0)
+  {
+    return false
+  }
+  setQuadFormula(pfaQF, quadrature);
+  pfa_dt = dt;
   return true;
 }
 
@@ -27,10 +38,11 @@ double phi(double x)
   return 0.398942280401433 * exp( -x*x/2 );
 }
 
+
 /* Cumulative distribution function of the normal distribution */
 double PHI(double x)
 {
-  return 0.0;
+  return 0.5*integrate_dx(phi(x), 0, x, pfa_dt, (*pfaQF).formula);
 }
 
 /* =====================================

@@ -99,6 +99,12 @@ void printQuadFormula(QuadFormula* qf)
 */
 double integrate(double (*f)(double), double a, double b, int N, QuadFormula* qf)
 {
+  if (a > b)
+  {
+    double temp = a;
+    a = b;
+    b = temp;
+  }
   double start = a;
   double length = (b-a)/(double)N;
   double end = a + length;
