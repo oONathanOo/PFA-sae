@@ -23,6 +23,7 @@ integration.o: integration.c integration.h
 
 pfa: test_pfa.o pfa.o integration.o
 	$(CC) -o test_pfa $^ $(CFLAGS)
+	./test_pfa
 
 test_pfa.o: test_pfa.c pfa.h
 	$(CC) -o $@ -c test_pfa.c

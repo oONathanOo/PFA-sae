@@ -21,11 +21,11 @@ double pfa_dt;
 */
 bool init_integration(char* quadrature, double dt)
 { 
-  if ((strcmp(name, "left") != 0) && (strcmp(name, "right") != 0) && (strcmp(name, "middle") != 0) && (strcmp(name, "trapezes") != 0) && (strcmp(name, "simpson") != 0) && (strcmp(name, "gauss2") != 0) && (strcmp(name, "gauss3") != 0) || dt < 0.0)
+  if ((strcmp(quadrature, "left") != 0) && (strcmp(quadrature, "right") != 0) && (strcmp(quadrature, "middle") != 0) && (strcmp(quadrature, "trapezes") != 0) && (strcmp(quadrature, "simpson") != 0) && (strcmp(quadrature, "gauss2") != 0) && (strcmp(quadrature, "gauss3") != 0) || dt < 0.0)
   {
-    return false
+    return false;
   }
-  setQuadFormula(pfaQF, quadrature);
+  setQuadFormula(&pfaQF, quadrature);
   pfa_dt = dt;
   return true;
 }
@@ -42,7 +42,14 @@ double phi(double x)
 /* Cumulative distribution function of the normal distribution */
 double PHI(double x)
 {
-  return 0.5*integrate_dx(phi(x), 0, x, pfa_dt, (*pfaQF).formula);
+  if (x >= 0)
+  {
+    return 0.5 +integrate_dx(phi, 0, x, pfa_dt, &pfaQF);
+  }
+  else
+  {
+    return 0.5 -integrate_dx(phi, x, 0, pfa_dt, &pfaQF);
+  }
 }
 
 /* =====================================
@@ -50,21 +57,21 @@ double PHI(double x)
 */
 double z0(Option* option)
 {
-  return (ln(option.K/option.S0)-((option.mu-((option.sig*option.sig)/2))*option.T))/(option.sig*sqrt(option.T));
+  return (log(option->K/option->S0)-((option->mu-((option->sig*option->sig)/2))*option->T))/(option->sig*sqrt(option->T));
 }
 double optionPrice(Option* option)
 {
-  if (option.type == PUT)
+  if (option->type == PUT)
   {
-    return option.K*PHI(z0(option))-(option.S0*exp(option.mu*option.T)*PHI(z0(option)-option.sig*sqrt(T)));
+    return option->K*PHI(z0(option))-(option->S0*exp(option->mu*option->T)*PHI(z0(option)-option->sig*sqrt(option->T)));
   }
-  else if (option.type == CALL)
+  else if (option->type == CALL)
   {
-    return (option.S0*exp(option.mu*option.T)*PHI(option.sig*sqrt(T)-z0(option)))-option.K*PHI(-z0(option));
+    return (option->S0*exp(option->mu*option->T)*PHI(option->sig*sqrt(option->T)-z0(option)))-option->K*PHI(-z0(option));
   }
   else
   {
-    return 0.0
+    return 0.0;
   }
 }
 
