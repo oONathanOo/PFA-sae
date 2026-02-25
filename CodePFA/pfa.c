@@ -48,9 +48,24 @@ double PHI(double x)
 /* =====================================
    Finance function: price of an option 
 */
+double z0(Option* option)
+{
+  return (ln(option.K/option.S0)-((option.mu-((option.sig*option.sig)/2))*option.T))/(option.sig*sqrt(option.T));
+}
 double optionPrice(Option* option)
 {
-  return 0.0;
+  if (option.type == PUT)
+  {
+    return option.K*PHI(z0(option))-(option.S0*exp(option.mu*option.T)*PHI(z0(option)-option.sig*sqrt(T)));
+  }
+  else if (option.type == CALL)
+  {
+    return (option.S0*exp(option.mu*option.T)*PHI(option.sig*sqrt(T)-z0(option)))-option.K*PHI(-z0(option));
+  }
+  else
+  {
+    return 0.0
+  }
 }
 
 
