@@ -21,7 +21,7 @@ double pfa_dt;
 */
 bool init_integration(char* quadrature, double dt)
 { 
-  if ((strcmp(quadrature, "left") != 0) && (strcmp(quadrature, "right") != 0) && (strcmp(quadrature, "middle") != 0) && (strcmp(quadrature, "trapezes") != 0) && (strcmp(quadrature, "simpson") != 0) && (strcmp(quadrature, "gauss2") != 0) && (strcmp(quadrature, "gauss3") != 0) || dt < 0.0)
+  if (dt == 0 || (strcmp(quadrature, "left") != 0) && (strcmp(quadrature, "right") != 0) && (strcmp(quadrature, "middle") != 0) && (strcmp(quadrature, "trapezes") != 0) && (strcmp(quadrature, "simpson") != 0) && (strcmp(quadrature, "gauss2") != 0) && (strcmp(quadrature, "gauss3") != 0) || dt < 0.0)
   {
     return false;
   }
@@ -85,16 +85,56 @@ double optionPrice(Option* option)
 */
 double clientPDF_X(InsuredClient* client, double x)
 {
-  return 0.0;
+  if (x <= 0)
+  {
+    return 0;
+  }
+  return (1.0/(client->s*x))*phi((log(x)-client->m)/client->s);
 }
-
 
 /* Cumulative distribution function (CDF) of variable X.
    X is the reimbursement in case of a claim from the client.
 */
 double clientCDF_X(InsuredClient* client, double x)
 {
-  return 0.0;
+  if (x <= 0)
+  {
+    return 0;
+  }
+  return PHI((log(x)-client->m)/client->s);
+}
+
+
+static InsuredClient* localClient;
+static double localX;
+
+
+/* This function assumes that static variables localClient and localX have been set.
+   It can be an argument of integrate_dx (since it has the good signature)
+*/
+static double localProductPDF(double t)
+{
+  if (t <=0.0 || t>=localX)
+  {
+    return 0.0;
+  }
+  return clientPDF_X(localClient, localX - t) * clientPDF_X(localClient, t);
+}
+
+/* Density of X1+X2
+
+   This function assumes that static variable localClient has been set.
+   It is called by clientPDF_X1X2
+   It can also be an argument of integrate_dx (since it has the good signature)
+*/
+static double localPDF_X1X2(double x)
+{
+  if (x <= 0.0)
+  {
+    return 0.0;
+  }
+  localX = x;
+  return integrate_dx(localProductPDF, 0.0, x, pfa_dt, &pfaQF);
 }
 
 
@@ -104,7 +144,10 @@ double clientCDF_X(InsuredClient* client, double x)
 */
 double clientPDF_X1X2(InsuredClient* client, double x)
 {
-  return 0.0;
+  if ( x<=0.0 ) return 0.0;
+
+  localClient = client;
+  return localPDF_X1X2(x);
 }
 
 
@@ -114,7 +157,12 @@ double clientPDF_X1X2(InsuredClient* client, double x)
 */
 double clientCDF_X1X2(InsuredClient* client, double x)
 {
-  return 0.0;
+  if (x<= 0.0)
+  {
+    return 0.0;
+  }
+  localClient = client;
+  return integrate_dx(localPDF_X1X2, 0, x, pfa_dt, &pfaQF);
 }
 
 
@@ -124,7 +172,19 @@ double clientCDF_X1X2(InsuredClient* client, double x)
 */
 double clientCDF_S(InsuredClient* client, double x)
 {
-  return 0.0;
+  if (x < 0.0)
+  {
+    return 0.0;
+  }
+  double p0 = (*client).p[0];
+  double p1 = (*client).p[1];
+  double p2 = (*client).p[2];
+  if (x == 0.0)
+  {
+    return p0;
+  }
+  return p0 + p1*(clientCDF_X(client, x))+(p2*clientCDF_X1X2(client, x));
+
 }
 
 
